@@ -41,7 +41,6 @@ body {
 }
 .notes-icons span {
     color: #fff;
-    margin-left: 5px;
 }
 /* ======================================= */
 
@@ -106,7 +105,7 @@ body {
 } */
 
 .card-icons span {
-    margin-left: 5px;
+    cursor: pointer;
 }
 
 /* ======================================= */

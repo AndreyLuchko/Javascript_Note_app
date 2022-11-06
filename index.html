@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://kit.fontawesome.com/7b776fe5ae.js" crossorigin="anonymous"></script>
+    <!-- <script src="https://kit.fontawesome.com/7b776fe5ae.js" crossorigin="anonymous"></script> -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Roboto:regular,500" rel="stylesheet" />
     <link rel="stylesheet" href="./css/style.css">
@@ -24,8 +24,8 @@
                     <li>Dates</li>
                 </ul>
                 <div class="notes-icons">
-                    <span><i class="fa-solid fa-box-archive"></i></span>
-                    <span><i class="fa-solid fa-trash"></i></span>
+                    <span class="material-icons">archive</span>
+                    <span class="material-icons">delete</span>
                 </div>
 
             </div>
@@ -55,20 +55,20 @@
                 <div class="modal_content">
                     <div class="modal_container">
                         <div class="modal_header">
-                            <div class="modal_title"><input type="text" name="" id="" placeholder="Name"></div>
+                            <div class="modal_title"><input type="text" name="" id="modal_title" placeholder="Name"></div>
                             <div class="modal_close">&times;</div>
                         </div>
                         <div class="modal_body">
                             
-                            <input type="date" name="" id="">
-                            <select name="" id="">
+                            <input type="date" name="" id="date">
+                            <select name="" id="select">
                                 <option value="Task">Task</option>
                                 <option value="Random Thought">Random Thought</option>
                                 <option value="Idea">Idea</option>
                                 <option value="Quote">Quote</option>
                             </select>
-                            <input type="text" name="" id="" placeholder="Content">
-                            <input type="text" name="" id="" placeholder="Dates">
+                            <input type="text" name="" id="content" placeholder="Content">
+                            <input type="text" name="" id="dates" placeholder="Dates">
 
                         </div>
                         <div class="modal_footer">
