@@ -3,13 +3,16 @@
     margin: 0;
     box-sizing: border-box;
 }
+
 body {
     font-family: 'Roboto', sans-serif;
 }
+
 .container {
     width: 80%;
     margin: 20px auto;
 }
+
 .notes-header {
     background: rgb(112, 112, 112);
     width: 100%;
@@ -18,16 +21,19 @@ body {
     justify-content: space-between;
     border-radius: 3px;
 }
+
 .notes-header-list {
     display: flex;
-    
+
 }
+
 .notes-header-list {
     width: 80%;
     margin-left: 50px;
     list-style: none;
     color: #fff;
 }
+
 .notes-header-list li {
     white-space: nowrap;
     overflow: hidden;
@@ -35,13 +41,16 @@ body {
     padding: 0.5rem;
     width: 20%;
 }
-.notes-icons, 
+
+.notes-icons,
 .card-icons {
     padding-right: 0.5rem;
 }
+
 .notes-icons span {
     color: #fff;
 }
+
 /* ======================================= */
 
 .notes-list {
@@ -53,25 +62,27 @@ body {
     display: flex;
     width: 100%;
     justify-content: space-between;
-    align-items:center;
+    align-items: center;
     background-color: #c4cefa;
     border-radius: 2px;
 }
+
 .card-editable {
     margin-left: 50px;
     width: 80%;
     display: flex;
     position: relative;
 }
+
 .card-editable span {
     position: absolute;
-    top:50%;
-    transform:translate(0, -50%);
+    top: 50%;
+    transform: translate(0, -50%);
     left: -45px;
     width: 2rem;
     height: 2rem;
     border-radius: 50%;
-    background-color:#504e4e;
+    background-color: #504e4e;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -92,9 +103,11 @@ body {
     text-overflow: ellipsis;
     list-style: none;
 }
+
 .card-list li:first-child {
     font-weight: bold;
 }
+
 /* select {
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -121,19 +134,21 @@ body {
     background-color: rgba(0, 0, 0, 0.5);
     display: none;
 }
+
 .modal_content {
     background-color: #fefefe;
     margin: 15% auto;
     border: 1px solid #888;
     border-radius: 10px;
-    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
     width: 60%;
     padding: 20px;
     z-index: 9999;
 }
+
 .modal_header {
     display: flex;
-    align-items:center;
+    align-items: center;
     justify-content: space-between;
     margin-bottom: 15px;
 }
@@ -141,39 +156,47 @@ body {
 .modal_title {
     width: 100%;
 }
+
 .modal_close {
     font-size: 1.2em;
     cursor: pointer;
 }
+
 .modal_title input {
     border: none;
     width: 80%;
     font-weight: bold;
     font-size: 1.5em;
 }
+
 .modal_body {
     display: flex;
     flex-wrap: wrap;
     row-gap: 5px;
     column-gap: 5px;
-   margin-bottom: 5px;
+    margin-bottom: 5px;
 }
+
 .modal_body select,
 .modal_body input[type="text"] {
     flex: 1 1 50%;
     font-size: 1em;
 }
+
 .modal_body select,
 .modal_body input {
     border: 1px solid rgb(197, 197, 197);
     padding: 5px;
     border-radius: 3px;
 }
+
 .modal_footer {
     text-align: end;
 
 }
-.modal_footer button {
+
+.modal_footer button,
+.modal_footer input {
     padding: 5px;
     cursor: pointer;
     width: 70px;
@@ -183,16 +206,39 @@ body {
     border: none;
     border-radius: 3px;
 }
-.modal_footer button:last-child {
+
+.modal_footer input {
     background-color: rgb(223, 81, 81);
 }
 
 /* ======================================= */
 
 .notes_create {
-   text-align: end;
-   margin-top: 10px;
+    text-align: end;
+    margin-top: 10px;
 }
+
 .notes_create-btn {
     cursor: pointer;
+    padding: 0.3rem;
+    background-color: rgb(230, 230, 230);
+    border-radius: 0.4rem;
 }
+
+.show {
+    display: block
+}
+
+.hide {
+    display: none
+}
+
+.archive {
+    text-decoration: line-through;
+    color: #888;
+}
+
+.pointer {
+    pointer-events: none;
+}
+
