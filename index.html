@@ -55,13 +55,14 @@
                     <div class="modal_container">
                         <form action="#" id="form">
                             <div class="modal_header">
-                                <div class="modal_title"><input type="text" name="name" id="modal_title" placeholder="Name">
+                                <div class="modal_title"><input type="text" name="name" id="modal_title"
+                                        placeholder="Name note">
                                 </div>
                                 <div data-close class="modal_close">&times;</div>
                             </div>
                             <div class="modal_body">
 
-                                <input type="date" name="date" id="date">
+                                <input type="text" name="date" id="date" readonly>
                                 <select name="category" id="select">
                                     <option value="Task">Task</option>
                                     <option value="Random Thought">Random Thought</option>
@@ -69,8 +70,11 @@
                                     <option value="Quote">Quote</option>
                                 </select>
                                 <input type="text" name="content" id="content" placeholder="Content">
-                                <input type="text" name="dates" id="dates" placeholder="Dates">
-
+                                <div>
+                                    <label for="dates">Date completed</label>
+                                    <input type="date" id="forDates">
+                                    <input type="text" name="dates" id="dates" readonly>
+                                </div>
                             </div>
                             <div class="modal_footer">
                                 <input type="button" class="modal_footer-btnCancel" value="Canсel">
@@ -80,14 +84,36 @@
                     </div>
                 </div>
             </div>
-            <div  class="notes_create">
+            <div class="notes_create">
                 <button class="notes_create-btn">Cereate Note</button>
-               
+                <button class="notes_show_archive-btn">Show archive note</button>
+
             </div>
 
         </section>
         <section class="total">
-
+            <div class="total-header">
+                <ul class="notes-header-list total-header-list">
+                    <li>Note Category</li>
+                    <li>Active</li>
+                    <li>Archived</li>
+                </ul>
+            </div>
+            <div class="total-list">
+                <div class="card">
+                    <div class="card-editable total-list-editable">
+                        <span class="material-icons">
+                            shopping_cart
+                        </span>
+                        <ul class="card-list total-list-card">
+                            <li>Task</li>
+                            <li>Number</li>
+                            <li>Number</li>
+                        </ul>
+                        <button class="total-btn">Show archive</button>
+                    </div>
+                </div>
+            </div>
         </section>
     </div>
     <script type="module" src="./main.js"></script>

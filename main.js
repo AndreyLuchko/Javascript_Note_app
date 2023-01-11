@@ -1,15 +1,23 @@
-import { table } from './Constant/constant.js';
+// import { table } from './Constant/constant.js';
 
 
 const form = document.querySelector('#form'),
     createNoteButton = document.querySelector(".notes_create-btn"),
+    showNoteButton = document.querySelector(".notes_show_archive-btn"),
     modalWindow = document.querySelector(".modal"),
     closeModalBtn = modalWindow.querySelector(".modal_footer-btnCancel"),
     modalClose = modalWindow.querySelector('[data-close]'),
-    notesList = document.querySelector('.notes-list');
+    notesList = document.querySelector('.notes-list'),
+    totalList = document.querySelector('.total-list');
 
+    //  краще зробити const (перевірка при запуску LS) ?????
 let notes = [], // загальний масив для роботи з LocalStorage
     id; // допоміжна змінна
+
+const tasks = [],
+    randomThought = [],
+    idea = [],
+    quote = [];
 
 // Клас, який створює однотипни об'єкти
 class Note {
@@ -22,12 +30,14 @@ class Note {
         this.content = content;
         this.dates = dates;
         this.completed = completed;
-        this.cssClass = this.completed ? 'card archive' : 'card'; // Создание CSS класса ???
+        this.cssClass = this.completed ? 'card archive' : 'card'; // Створення CSS класа
+        this.atribute = this.completed ? 'hidden' : ''; // відображення архивної нотатки
+        this.classPointer = this.completed ? 'material-icons pointer' : 'material-icons';
     }
 
     render() {
         const noteHTML = `
-            <div class="${this.cssClass}" id="${this.id}">
+            <div class="${this.cssClass}" id="${this.id}" ${this.atribute}>
                 <div class="card-editable">
                     <span class="material-icons" data-action="img">${this.img}</span>
                     <ul class="card-list">
@@ -39,9 +49,9 @@ class Note {
                     </ul>
                 </div>
                 <div class="card-icons">
-                    <span class="material-icons" data-action="edit">edit</span>
+                    <span class="${this.classPointer}" data-action="edit">edit</span>
                     <span class="material-icons" data-action="archive">archive</span>
-                    <span class="material-icons" data-action="delete">delete</span>
+                    <span class="${this.classPointer}" data-action="delete">delete</span>
                 </div>
             </div>
         `;
@@ -49,13 +59,39 @@ class Note {
     }
 }
 
-// Функція повертає новий об'єкт із вмісту модального вікна
-function newObjFromModal(idNum) {
-    const data = new FormData(form);
+class Total {
+    constructor(img, category, active, archived) {
+        this.img = img;
+        this.category = category;
+        this.active = active;
+        this.archived = archived;
+    }
+
+    render() {
+        const totalHTML = `
+            <div class="card">
+                <div class="card-editable total-list-editable">
+                    <span class="material-icons">
+                        ${this.img}
+                    </span>
+                    <ul class="card-list total-list-card">
+                        <li>${this.category}</li>
+                        <li>${this.active}</li>
+                        <li>${this.archived}</li>
+                    </ul>
+                <button class="total-btn">Show archive</button>
+                </div>
+            </div>
+        `;
+        totalList.insertAdjacentHTML('beforeend', totalHTML);
+    }
+}
+
+function setImgFromCategory(category) {
     let imgNote;
 
     // Формування іконки відповідно до категорії нотатки
-    switch (data.get('category')) {
+    switch (category) {
         case "Task":
             imgNote = 'shopping_cart';
             break;
@@ -71,15 +107,64 @@ function newObjFromModal(idNum) {
         default:
             break;
     }
+    return imgNote;
+}
+
+function forTotalRender(arr, category) {
+
+}
+
+function total(array, category) {
+    notes = JSON.parse(localStorage.getItem('notes'));
+
+    const arrOfCategory = notes.filter(note => note.category === category);
+
+    notes.forEach(note => {
+        if (note.completed === true && note.category === category) {
+            array.push(note);
+        }
+    });
+
+    return {
+        arr: array,
+        totalCount: arrOfCategory.length,
+        archiveCount: array.length
+    };
+}
+
+// console.log(total(idea, 'Idea'));
+// console.log(total(tasks, 'Task'));
+// console.log(total(randomThought, 'Random Thought'));
+// console.log(total(quote, 'Quote'));
+
+function forDate() {
+
+    let temp;
+    const forDates = form.querySelector('#forDates');
+    const dates = form.querySelector('[name="dates"]');
+
+    if (dates.value === '') {
+        temp = forDates.value;
+    } else {
+        temp = `${dates.value}, ${forDates.value}`;
+    }
+
+    return temp;
+}
+
+// Функція повертає новий об'єкт із вмісту модального вікна
+function newObjFromModal(idNum) {
+
+    const data = new FormData(form);
 
     return new Note(
         `id${idNum}`,
-        imgNote,
+        setImgFromCategory(data.get('category')),
         data.get('name'),
         data.get('date'),
         data.get('category'),
         data.get('content'),
-        data.get('dates')
+        forDate()
     );
 }
 
@@ -139,8 +224,17 @@ document.addEventListener('keydown', (e) => {
 // Створюю натискання на кнопку Create Note (додати нову нотатку)
 createNoteButton.addEventListener('click', () => {
     form.reset();
+    const dateNow = form.querySelector('#date');
+    const datesInput = form.querySelector('#dates');
+
+    dateNow.value = today();
+    datesInput.setAttribute('hidden', '');
+
     openModal();
 });
+
+// Відображення архивованих нотаток по натисканню на кнопку "Show archive note"
+showNoteButton.addEventListener('click', showArchive);
 
 // Дії із завданням по натисканню 'submit' у мод вікні
 form.addEventListener('submit', (e) => {
@@ -210,14 +304,28 @@ function archiveTask(e) {
         // змінюємо занчення на протилежне
         note.completed = !note.completed;
 
-        // зберігаємо в LocalStorage
-        saveToLS();
-
         // додаєм класи для відображення
         parenNode.classList.toggle('archive');
         e.target.previousElementSibling.classList.toggle('pointer'); // заборона натискання
         e.target.nextElementSibling.classList.toggle('pointer'); // заборона натискання
+
+        if (parenNode.classList.contains('archive')) {
+            parenNode.setAttribute('hidden', '');
+        }
+
+        // зберігаємо в LocalStorage
+        saveToLS();
     }
+}
+
+// Ф-я відображення архивованих нотаток
+function showArchive() {
+    const arrNotes = notes.filter(note => note.completed === true);
+
+    arrNotes.forEach(note => {
+        const checkAtr = notesList.querySelector(`#${note.id}`);
+        checkAtr.removeAttribute('hidden');
+    });
 }
 
 // Ф-я дії із нотаткою після натискання кнопки "edit"
@@ -225,21 +333,22 @@ function editNote(e) {
     // Перевірка, що натискання було по кнопці "edit"
     if (e.target.dataset.action === 'edit') {
 
-        const parenNode = e.target.closest('.card');
+        const parenNode = e.target.closest('.card'),
+              datesInput = form.querySelector('#dates'),
+              forDates = form.querySelector('#forDates'),
+              arrForm = form.querySelectorAll('[name]'), // псевдомасив із форми мод вікна по атрибуту [name]
+              arrNote = parenNode.querySelectorAll('li'); // псевдомасив із батькивскої ноди елементів li
 
-        // відкриваєм мод вікно
-        openModal();
-
-        // псевдомасив із форми мод вікна по атрибуту [name]
-        const arrForm = form.querySelectorAll('[name]');
-
-        // псевдомасив із батькивскої ноди елементів li
-        const arrNote = parenNode.querySelectorAll('li');
-
+        datesInput.removeAttribute('hidden');
+        
         // призначаємо елементам форми данні із нотатки
         arrForm.forEach((item, i) => {
             item.value = arrNote[i].innerText;
         });
+
+        let arrDates = arrNote[4].innerText.split(', ');
+
+        forDates.value = arrDates[arrDates.length - 1];
 
         // призначаємо допоміжної змінні відповідний id
         id = parenNode.id;
@@ -247,6 +356,9 @@ function editNote(e) {
         // встановлюємо допоміжний атрибут на мод вікно, 
         // щоб потім визначити які дії робити по натисканню кнопки 'submit'
         modalWindow.setAttribute('data-forEdit', '');
+
+        // відкриваєм мод вікно
+        openModal();
     }
 }
 
@@ -286,6 +398,19 @@ function changeNote(e) {
 // Ф-я збереження даних у LocalStorage
 function saveToLS() {
     localStorage.setItem('notes', JSON.stringify(notes));
+}
+
+// Ф-я створення дати
+function today() {
+    const today = new Date();
+    const options = {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    };
+
+    const now = today.toLocaleString('en-US', options);
+    return now;
 }
 
 

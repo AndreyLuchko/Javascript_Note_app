@@ -13,7 +13,8 @@ body {
     margin: 20px auto;
 }
 
-.notes-header {
+.notes-header,
+.total-header {
     background: rgb(112, 112, 112);
     width: 100%;
     display: flex;
@@ -24,7 +25,6 @@ body {
 
 .notes-header-list {
     display: flex;
-
 }
 
 .notes-header-list {
@@ -38,7 +38,7 @@ body {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    padding: 0.5rem;
+    padding: 0.7rem;
     width: 20%;
 }
 
@@ -99,7 +99,7 @@ body {
     white-space: nowrap;
     overflow: hidden;
     width: 20%;
-    padding: 0.5rem;
+    padding: 0.7rem;
     text-overflow: ellipsis;
     list-style: none;
 }
@@ -107,15 +107,6 @@ body {
 .card-list li:first-child {
     font-weight: bold;
 }
-
-/* select {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-  } */
-/* input::-webkit-calendar-picker-indicator{
-    display: none;
-} */
 
 .card-icons span {
     cursor: pointer;
@@ -141,7 +132,7 @@ body {
     border: 1px solid #888;
     border-radius: 10px;
     box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
-    width: 60%;
+    width: 40%;
     padding: 20px;
     z-index: 9999;
 }
@@ -155,6 +146,11 @@ body {
 
 .modal_title {
     width: 100%;
+}
+
+#date {
+    border: none;
+    color: rgb(29, 116, 216);
 }
 
 .modal_close {
@@ -172,14 +168,14 @@ body {
 .modal_body {
     display: flex;
     flex-wrap: wrap;
-    row-gap: 5px;
+    row-gap: 10px;
     column-gap: 5px;
-    margin-bottom: 5px;
+    margin-bottom: 20px;
 }
 
 .modal_body select,
 .modal_body input[type="text"] {
-    flex: 1 1 50%;
+    flex: 1 1 100%;
     font-size: 1em;
 }
 
@@ -190,6 +186,20 @@ body {
     border-radius: 3px;
 }
 
+.modal_body div {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 10px;
+    align-items: center;
+    column-gap: 10px;
+}
+
+.modal_body label {
+    color: #888;
+    font-size: 0.9rem;
+}
+
 .modal_footer {
     text-align: end;
 
@@ -197,7 +207,7 @@ body {
 
 .modal_footer button,
 .modal_footer input {
-    padding: 5px;
+    padding: 10px;
     cursor: pointer;
     width: 70px;
     margin-left: 10px;
@@ -205,10 +215,47 @@ body {
     color: #ffffff;
     border: none;
     border-radius: 3px;
+
 }
 
 .modal_footer input {
     background-color: rgb(223, 81, 81);
+}
+
+/* ======================================= */
+
+.total {
+    margin-top: 50px;
+}
+
+.total-header-list {
+    width: 100%;
+}
+
+.total-header-list li {
+    width: 30%;
+}
+
+.total-list-card {
+    width: 100%;
+}
+
+.total-list-card li {
+    width: 30%;
+}
+
+.total-btn {
+  position: absolute;
+  top: 14%;
+  right: 5%;
+  padding: 7px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.total-list-editable {
+    width: 100%;
 }
 
 /* ======================================= */
@@ -242,3 +289,6 @@ body {
     pointer-events: none;
 }
 
+.card[hidden] {
+    display: none;
+}
