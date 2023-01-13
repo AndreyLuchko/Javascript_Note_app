@@ -10,11 +10,12 @@ const form = document.querySelector('#form'),
     notesList = document.querySelector('.notes-list'),
     totalList = document.querySelector('.total-list');
 
-    //  краще зробити const (перевірка при запуску LS) ?????
+ 
+
 let notes = [], // загальний масив для роботи з LocalStorage
     id; // допоміжна змінна
 
-const tasks = [],
+let tasks = [],
     randomThought = [],
     idea = [],
     quote = [];
@@ -65,19 +66,20 @@ class Total {
         this.category = category;
         this.active = active;
         this.archived = archived;
+        this.id = this.category.split(' ').length === 1 ? this.category : this.category.split(' ').join("");
     }
 
     render() {
         const totalHTML = `
-            <div class="card">
+            <div class="card" id="${this.id}">
                 <div class="card-editable total-list-editable">
                     <span class="material-icons">
                         ${this.img}
                     </span>
                     <ul class="card-list total-list-card">
                         <li>${this.category}</li>
-                        <li>${this.active}</li>
-                        <li>${this.archived}</li>
+                        <li class="active-tasks">${this.active}</li>
+                        <li class="archive-tasks">${this.archived}</li>
                     </ul>
                 <button class="total-btn">Show archive</button>
                 </div>
@@ -110,26 +112,67 @@ function setImgFromCategory(category) {
     return imgNote;
 }
 
-function forTotalRender(arr, category) {
+// function forTotalRender(obj) {
+   
+//     new Total(obj.img, obj.category, obj.totalCount, obj.archiveCount).render();
+   
+// }
 
-}
+// forTotalRender(total(idea, 'Idea'));
+// forTotalRender(total(tasks, 'Task'));
+// forTotalRender(total(randomThought, 'Random Thought'));
+// forTotalRender(total(quote, 'Quote'));
 
-function total(array, category) {
-    notes = JSON.parse(localStorage.getItem('notes'));
 
-    const arrOfCategory = notes.filter(note => note.category === category);
+function createTotalList(category) {
+    // array = JSON.parse(localStorage.getItem(category));
 
-    notes.forEach(note => {
-        if (note.completed === true && note.category === category) {
-            array.push(note);
-        }
-    });
+    // створення масиву всіх об'єкті з відповідною категорією
+    // const arrOfCategory = notes.filter(note => note.category === category);
 
-    return {
-        arr: array,
-        totalCount: arrOfCategory.length,
-        archiveCount: array.length
-    };
+ let array;
+    if (category === 'Task') {
+       array = tasks;
+    } 
+    if (category === 'Random Thought') {
+        array = randomThought;
+    } 
+    if (category === 'Idea') {
+        array = idea;
+    }
+    if (category === 'Quote') {
+        array = quote;
+    }
+    const arrOfArchive = array.filter(note => note.completed === true);
+
+    console.log(array);
+    console.log(arrOfArchive);
+
+    // notes.forEach(note => {
+
+    //     // перевірка чи є у масиві array об'єкт с таким id
+    //     if(array.some(item => item.id === note.id)) {
+    //         return;
+    //     } 
+    //     // перевірка чи заархивован об'єкт
+    //     else if (note.completed === true && note.category === category) {
+    //         array.push(note);
+    //     }
+        
+    // });
+
+    new Total(setImgFromCategory(category),
+              category, 
+              array.length, 
+              arrOfArchive.length).render();
+
+    // return {
+    //     arr: array,
+    //     category: category,
+    //     img: setImgFromCategory(category),
+    //     totalCount: array.length,
+    //     archiveCount: arrOfarchive.length
+    // };
 }
 
 // console.log(total(idea, 'Idea'));
@@ -155,15 +198,15 @@ function forDate() {
 // Функція повертає новий об'єкт із вмісту модального вікна
 function newObjFromModal(idNum) {
 
-    const data = new FormData(form);
+    let form = document.forms.modal;
 
     return new Note(
         `id${idNum}`,
-        setImgFromCategory(data.get('category')),
-        data.get('name'),
-        data.get('date'),
-        data.get('category'),
-        data.get('content'),
+        setImgFromCategory(form.category.value),
+        form.name.value,
+        form.date.value,
+        form.category.value,
+        form.content.value,
         forDate()
     );
 }
@@ -185,6 +228,38 @@ function renderFromLS() {
             );
             noteHTML.render();
         });
+
+        // знайти в масиві notes всі об'єкти з уникальной категориєй,
+        // для каждої категорії запустити
+        // createTotalList(category)
+
+        // const categories = ['Task', 'Random Thought', 'Idea', 'Quote'];
+
+        notes.forEach(item => {
+            if (item.category === 'Task') {
+                tasks.push(item);
+            } else if (item.category === 'Random Thought') {
+                randomThought.push(item);
+            } else if (item.category === 'Idea') {
+                idea.push(item);
+            } else if (item.category === 'Quote') {
+                quote.push(item);
+            }
+        });
+
+        if (tasks.length > 0) {
+            createTotalList('Task');
+        }
+        if (randomThought.length > 0) {
+            createTotalList('Random Thought');
+        }
+        if (idea.length > 0) {
+            createTotalList('Idea');
+        }
+        if (quote.length > 0) {
+            createTotalList('Quote');
+        }
+
     }
 }
 renderFromLS();
@@ -263,9 +338,70 @@ function addNote(e) {
     let noteHTML = newObjFromModal(Date.now());
     noteHTML.render();
     notes.push(noteHTML); // додаєм данні в загальний масив
-    saveToLS(); // додаємо дані до сховища браузера
+    saveToLS(notes, 'notes'); // додаємо дані до сховища браузера
+
+    // створюємо масив з об'єктими відповідно категорії  та записуэмо його у LS
+    // const arrayOfCategory = categoryOfTotalList(noteHTML);
+
+    const checkId = noteHTML.category.split(' ').length === 1 ? noteHTML.category : noteHTML.category.split(' ').join("");
+
+    if (document.querySelector(`#${checkId}`)) {
+        
+        console.log("делаем что-то");
+
+        categoryOfTotalList(noteHTML);
+
+        const arrOfCategory = notes.filter(note => note.category === noteHTML.category);
+
+        document.querySelector(`#${checkId} .active-tasks`).innerText = arrOfCategory.length;
+       
+        
+        // тут надо придумать как поменять сначала числа в DOM, 
+        // рендер из LS
+        //а потом добавление в массив объектов(это работает, просто рендер из LS не настроен)
+       
+        
+    } else {
+        categoryOfTotalList(noteHTML);
+        createTotalList(noteHTML.category);
+        console.log("Нет его");
+    }
+    
+
+    // forTotalRender(ObjRenderArrOfCategory);
+
+    // forTotalRender(createTotalList(tasks, 'Task'));
+    // forTotalRender(createTotalList(randomThought, 'Random Thought'));
+    // forTotalRender(createTotalList(quote, 'Quote'));
+
     closeModal();
 }
+
+function categoryOfTotalList(obj) {
+
+    // Вибір мвсива відповідно до категорії нотатки
+    switch (obj.category) {
+        case "Task":
+            tasks.push(obj);
+            saveToLS(tasks, obj.category);
+            break;
+        case "Random Thought":
+            randomThought.push(obj);
+            saveToLS(randomThought, obj.category);
+            break;
+        case "Idea":
+            idea.push(obj);
+            saveToLS(idea, obj.category);
+            break;
+        case "Quote":
+            quote.push(obj);
+            saveToLS(quote, obj.category);
+            break;
+        default:
+            break;
+    }
+}
+
 
 // Ф-я видалення нотатки
 function deleteNote(e) {
@@ -299,10 +435,10 @@ function archiveTask(e) {
         const id = parenNode.id;
 
         // В загальному масиві знаходимо відповідний об'єкт по id
-        const note = notes.find(note => note.id === id);
+        const newNote = notes.find(note => note.id === id);
 
         // змінюємо занчення на протилежне
-        note.completed = !note.completed;
+        newNote.completed = !newNote.completed;
 
         // додаєм класи для відображення
         parenNode.classList.toggle('archive');
@@ -314,7 +450,18 @@ function archiveTask(e) {
         }
 
         // зберігаємо в LocalStorage
-        saveToLS();
+        saveToLS(notes, 'notes');
+
+        // const array = JSON.parse(localStorage.getItem(note.category));
+
+        const checkId = newNote.category.split(' ').length === 1 ? newNote.category : newNote.category.split(' ').join("");
+
+
+        // створення масиву всіх об'єкті з відповідною категорією
+        const arrOfarchive = notes.filter(note => note.completed === true && newNote.category === note.category);
+
+        document.querySelector(`#${checkId} .archive-tasks`).innerText = arrOfarchive.length;
+
     }
 }
 
@@ -396,8 +543,8 @@ function changeNote(e) {
 }
 
 // Ф-я збереження даних у LocalStorage
-function saveToLS() {
-    localStorage.setItem('notes', JSON.stringify(notes));
+function saveToLS(arr, name) {
+    localStorage.setItem(name, JSON.stringify(arr));
 }
 
 // Ф-я створення дати
@@ -412,6 +559,7 @@ function today() {
     const now = today.toLocaleString('en-US', options);
     return now;
 }
+
 
 
 
