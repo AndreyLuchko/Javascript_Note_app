@@ -3,14 +3,13 @@
 
 const form = document.querySelector('#form'),
     createNoteButton = document.querySelector(".notes_create-btn"),
-    showNoteButton = document.querySelector(".notes_show_archive-btn"),
     modalWindow = document.querySelector(".modal"),
     closeModalBtn = modalWindow.querySelector(".modal_footer-btnCancel"),
     modalClose = modalWindow.querySelector('[data-close]'),
     notesList = document.querySelector('.notes-list'),
     totalList = document.querySelector('.total-list');
 
- 
+
 
 let notes = [], // загальний масив для роботи з LocalStorage
     id; // допоміжна змінна
@@ -71,13 +70,13 @@ class Total {
 
     render() {
         const totalHTML = `
-            <div class="card" id="${this.id}">
+            <div class="card" data-category="${this.category}" id="${this.id}">
                 <div class="card-editable total-list-editable">
                     <span class="material-icons">
                         ${this.img}
                     </span>
                     <ul class="card-list total-list-card">
-                        <li>${this.category}</li>
+                        <li class="category-name">${this.category}</li>
                         <li class="active-tasks">${this.active}</li>
                         <li class="archive-tasks">${this.archived}</li>
                     </ul>
@@ -113,9 +112,9 @@ function setImgFromCategory(category) {
 }
 
 // function forTotalRender(obj) {
-   
+
 //     new Total(obj.img, obj.category, obj.totalCount, obj.archiveCount).render();
-   
+
 // }
 
 // forTotalRender(total(idea, 'Idea'));
@@ -123,6 +122,27 @@ function setImgFromCategory(category) {
 // forTotalRender(total(randomThought, 'Random Thought'));
 // forTotalRender(total(quote, 'Quote'));
 
+// Обераємо масив відповідно категорії об'єкта
+function chooseArrOfCategory(obj) {
+    let array;
+    switch (obj.category) {
+        case "Task":
+            array = tasks;
+            break;
+        case "Random Thought":
+            array = randomThought;
+            break;
+        case "Idea":
+            array = idea;
+            break;
+        case "Quote":
+            array = quote;
+            break;
+        default:
+            break;
+    }
+    return array;
+}
 
 function createTotalList(category) {
     // array = JSON.parse(localStorage.getItem(category));
@@ -130,13 +150,13 @@ function createTotalList(category) {
     // створення масиву всіх об'єкті з відповідною категорією
     // const arrOfCategory = notes.filter(note => note.category === category);
 
- let array;
+    let array;
     if (category === 'Task') {
-       array = tasks;
-    } 
+        array = tasks;
+    }
     if (category === 'Random Thought') {
         array = randomThought;
-    } 
+    }
     if (category === 'Idea') {
         array = idea;
     }
@@ -144,9 +164,6 @@ function createTotalList(category) {
         array = quote;
     }
     const arrOfArchive = array.filter(note => note.completed === true);
-
-    console.log(array);
-    console.log(arrOfArchive);
 
     // notes.forEach(note => {
 
@@ -158,13 +175,13 @@ function createTotalList(category) {
     //     else if (note.completed === true && note.category === category) {
     //         array.push(note);
     //     }
-        
+
     // });
 
     new Total(setImgFromCategory(category),
-              category, 
-              array.length, 
-              arrOfArchive.length).render();
+        category,
+        array.length,
+        arrOfArchive.length).render();
 
     // return {
     //     arr: array,
@@ -238,12 +255,16 @@ function renderFromLS() {
         notes.forEach(item => {
             if (item.category === 'Task') {
                 tasks.push(item);
+                saveToLS(tasks, item.category);
             } else if (item.category === 'Random Thought') {
                 randomThought.push(item);
+                saveToLS(randomThought, item.category);
             } else if (item.category === 'Idea') {
                 idea.push(item);
+                saveToLS(idea, item.category);
             } else if (item.category === 'Quote') {
                 quote.push(item);
+                saveToLS(quote, item.category);
             }
         });
 
@@ -308,9 +329,6 @@ createNoteButton.addEventListener('click', () => {
     openModal();
 });
 
-// Відображення архивованих нотаток по натисканню на кнопку "Show archive note"
-showNoteButton.addEventListener('click', showArchive);
-
 // Дії із завданням по натисканню 'submit' у мод вікні
 form.addEventListener('submit', (e) => {
     if (modalWindow.hasAttribute('data-forEdit')) {
@@ -340,41 +358,31 @@ function addNote(e) {
     notes.push(noteHTML); // додаєм данні в загальний масив
     saveToLS(notes, 'notes'); // додаємо дані до сховища браузера
 
-    // створюємо масив з об'єктими відповідно категорії  та записуэмо його у LS
-    // const arrayOfCategory = categoryOfTotalList(noteHTML);
-
-    const checkId = noteHTML.category.split(' ').length === 1 ? noteHTML.category : noteHTML.category.split(' ').join("");
+    const checkId = checkIdFromCategory(noteHTML.category);
 
     if (document.querySelector(`#${checkId}`)) {
-        
-        console.log("делаем что-то");
 
         categoryOfTotalList(noteHTML);
 
         const arrOfCategory = notes.filter(note => note.category === noteHTML.category);
 
         document.querySelector(`#${checkId} .active-tasks`).innerText = arrOfCategory.length;
-       
-        
-        // тут надо придумать как поменять сначала числа в DOM, 
-        // рендер из LS
-        //а потом добавление в массив объектов(это работает, просто рендер из LS не настроен)
-       
-        
+
     } else {
         categoryOfTotalList(noteHTML);
         createTotalList(noteHTML.category);
-        console.log("Нет его");
     }
-    
-
-    // forTotalRender(ObjRenderArrOfCategory);
-
-    // forTotalRender(createTotalList(tasks, 'Task'));
-    // forTotalRender(createTotalList(randomThought, 'Random Thought'));
-    // forTotalRender(createTotalList(quote, 'Quote'));
 
     closeModal();
+}
+
+function checkArr(arr, obj) {
+    if (arr.find(note => note.id === obj.id)) {
+        const index = arr.findIndex(note => note.id === obj.id);
+        arr.splice(index, 1);
+    } else {
+        arr.push(obj);
+    }
 }
 
 function categoryOfTotalList(obj) {
@@ -382,19 +390,19 @@ function categoryOfTotalList(obj) {
     // Вибір мвсива відповідно до категорії нотатки
     switch (obj.category) {
         case "Task":
-            tasks.push(obj);
+            checkArr(tasks, obj);
             saveToLS(tasks, obj.category);
             break;
         case "Random Thought":
-            randomThought.push(obj);
+            checkArr(randomThought, obj);
             saveToLS(randomThought, obj.category);
             break;
         case "Idea":
-            idea.push(obj);
+            checkArr(idea, obj);
             saveToLS(idea, obj.category);
             break;
         case "Quote":
-            quote.push(obj);
+            checkArr(quote, obj);
             saveToLS(quote, obj.category);
             break;
         default:
@@ -402,25 +410,35 @@ function categoryOfTotalList(obj) {
     }
 }
 
-
 // Ф-я видалення нотатки
 function deleteNote(e) {
 
     // Перевірка, що натискання було по кнопці "delete"
     if (e.target.dataset.action === 'delete') {
 
-        const parenNode = e.target.closest('.card');
+        const parentNode = e.target.closest('.card');
+
+
 
         // Id нотатки
-        const id = parenNode.id;
+        const id = parentNode.id;
 
         // Знаходимо індекс нотатки в масиві
         const index = notes.findIndex(note => note.id === id);
 
+        const checkId = checkIdFromCategory(notes[index].category);
+        const task = notes[index].category;
+
+
+        categoryOfTotalList(notes[index]);
+        const arrOfCategory = JSON.parse(localStorage.getItem(task));
+        document.querySelector(`#${checkId} .active-tasks`).innerText = arrOfCategory.length;
+
         // Видаляємо цей ел із масиву
         notes.splice(index, 1);
-        saveToLS();
-        parenNode.remove();
+        saveToLS(notes, 'notes');
+        parentNode.remove();
+        checkTotalListTasks();
     }
 }
 
@@ -429,10 +447,10 @@ function archiveTask(e) {
     // Перевірка, що натискання було по кнопці "archive"
     if (e.target.dataset.action === 'archive') {
 
-        const parenNode = e.target.closest('.card');
+        const parentNode = e.target.closest('.card');
 
         // Id нотатки
-        const id = parenNode.id;
+        const id = parentNode.id;
 
         // В загальному масиві знаходимо відповідний об'єкт по id
         const newNote = notes.find(note => note.id === id);
@@ -441,12 +459,12 @@ function archiveTask(e) {
         newNote.completed = !newNote.completed;
 
         // додаєм класи для відображення
-        parenNode.classList.toggle('archive');
+        parentNode.classList.toggle('archive');
         e.target.previousElementSibling.classList.toggle('pointer'); // заборона натискання
         e.target.nextElementSibling.classList.toggle('pointer'); // заборона натискання
 
-        if (parenNode.classList.contains('archive')) {
-            parenNode.setAttribute('hidden', '');
+        if (parentNode.classList.contains('archive')) {
+            parentNode.setAttribute('hidden', '');
         }
 
         // зберігаємо в LocalStorage
@@ -454,8 +472,7 @@ function archiveTask(e) {
 
         // const array = JSON.parse(localStorage.getItem(note.category));
 
-        const checkId = newNote.category.split(' ').length === 1 ? newNote.category : newNote.category.split(' ').join("");
-
+        const checkId = checkIdFromCategory(newNote.category);
 
         // створення масиву всіх об'єкті з відповідною категорією
         const arrOfarchive = notes.filter(note => note.completed === true && newNote.category === note.category);
@@ -465,14 +482,24 @@ function archiveTask(e) {
     }
 }
 
-// Ф-я відображення архивованих нотаток
-function showArchive() {
-    const arrNotes = notes.filter(note => note.completed === true);
+// Ф-я відображення архивованих нотаток відповідно категорії
+function showArchive(category) {
+    const arrNotes = notes.filter(note => note.completed === true && note.category === category);
 
     arrNotes.forEach(note => {
         const checkAtr = notesList.querySelector(`#${note.id}`);
         checkAtr.removeAttribute('hidden');
     });
+}
+// Відображення архивованих нотаток по натисканню на кнопку "Show archive"
+totalList.addEventListener('click', showArciveByCategory);
+
+// Ф-я дії по натисканню на кнопку "Show archive"
+function showArciveByCategory(e) {
+    if (e.target.classList.contains('total-btn')) {
+        const categoryName = e.target.closest('.card').dataset.category;
+        showArchive(categoryName);
+    }
 }
 
 // Ф-я дії із нотаткою після натискання кнопки "edit"
@@ -480,14 +507,14 @@ function editNote(e) {
     // Перевірка, що натискання було по кнопці "edit"
     if (e.target.dataset.action === 'edit') {
 
-        const parenNode = e.target.closest('.card'),
-              datesInput = form.querySelector('#dates'),
-              forDates = form.querySelector('#forDates'),
-              arrForm = form.querySelectorAll('[name]'), // псевдомасив із форми мод вікна по атрибуту [name]
-              arrNote = parenNode.querySelectorAll('li'); // псевдомасив із батькивскої ноди елементів li
+        const parentNode = e.target.closest('.card'),
+            datesInput = form.querySelector('#dates'),
+            forDates = form.querySelector('#forDates'),
+            arrForm = form.querySelectorAll('[name]'), // псевдомасив із форми мод вікна по атрибуту [name]
+            arrNote = parentNode.querySelectorAll('li'); // псевдомасив із батькивскої ноди елементів li
 
         datesInput.removeAttribute('hidden');
-        
+
         // призначаємо елементам форми данні із нотатки
         arrForm.forEach((item, i) => {
             item.value = arrNote[i].innerText;
@@ -498,7 +525,7 @@ function editNote(e) {
         forDates.value = arrDates[arrDates.length - 1];
 
         // призначаємо допоміжної змінні відповідний id
-        id = parenNode.id;
+        id = parentNode.id;
 
         // встановлюємо допоміжний атрибут на мод вікно, 
         // щоб потім визначити які дії робити по натисканню кнопки 'submit'
@@ -517,6 +544,9 @@ function changeNote(e) {
     // Створюємо об'єкт із відповідним id
     const noteHTML = newObjFromModal(id.slice(2));
 
+    const checkIdNext = checkIdFromCategory(noteHTML.category);
+    const nextCategory = noteHTML.category;
+
     // масив по атрибуту [data-action] у елемента з відповідним id
     const arrNote = document.querySelectorAll(`#${id} [data-action]`);
 
@@ -531,15 +561,50 @@ function changeNote(e) {
 
     // знажодимо нотатку із відповідним id у загальному масиві
     let note = notes.find(note => note.id === id);
+    const checkIdPrev = checkIdFromCategory(note.category);
+    const prevCategory = note.category;
+
+    if (prevCategory !== nextCategory) {
+
+        // Видалення нотатки
+        categoryOfTotalList(note);
+        const arrOfCategoryPrev = chooseArrOfCategory(note);
+        // Запис у Total List
+        document.querySelector(`#${checkIdPrev} .active-tasks`).innerText = arrOfCategoryPrev.length;
+
+        // Додали нотатку
+        categoryOfTotalList(noteHTML);
+        const arrOfCategoryNext = chooseArrOfCategory(noteHTML);
+        // Запис у Total List
+        // Якщо немає на сторінці такої категорії, додаємо
+        // Якщо є, змінюємо
+        if (document.querySelector(`#${checkIdNext}`)) {
+            document.querySelector(`#${checkIdNext} .active-tasks`).innerText = arrOfCategoryNext.length;
+        } else {
+            createTotalList(noteHTML.category);
+            document.querySelector(`#${checkIdNext} .active-tasks`).innerText = arrOfCategoryNext.length;
+        }
+
+    } else {
+        const arrOfCategory = chooseArrOfCategory(noteHTML);
+        const noteNew = arrOfCategory.find(note => note.id === id);
+        Object.assign(noteNew, noteHTML);
+        document.querySelector(`#${checkIdNext} .active-tasks`).innerText = arrOfCategory.length;
+        saveToLS(arrOfCategory, nextCategory);
+    }
 
     // призначаємо нотатці note нові значення із об'єкта noteHTML
     Object.assign(note, noteHTML);
 
     // зберігаємо у LocalStorage
-    saveToLS();
-
+    saveToLS(notes, 'notes');
+    checkTotalListTasks();
     // закриваєм мод вікно
     closeModal();
+}
+
+function checkIdFromCategory(category) {
+    return category.split(' ').length === 1 ? category : category.split(' ').join("");
 }
 
 // Ф-я збереження даних у LocalStorage
@@ -560,6 +625,21 @@ function today() {
     return now;
 }
 
+// Ф-я перевірки у Total List чи є пусті масиви з нотатками
+function checkTotalListTasks() {
+    const activeTasks = document.querySelectorAll('.active-tasks');
+    activeTasks.forEach(item => {
+        if (item.innerText === '0') {
+            item.closest('.card').remove();
+        }
+    });
+}
+
+
+console.log(tasks);
+console.log(idea);
+console.log(quote);
+console.log(randomThought);
 
 
 
