@@ -9,8 +9,18 @@ body {
 }
 
 .container {
-    width: 80%;
+    width: 60%;
     margin: 20px auto;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #888;
+}
+
+h1 span {
+    color:#c4cefa
 }
 
 .notes-header,
@@ -128,7 +138,7 @@ body {
 
 .modal_content {
     background-color: #fefefe;
-    margin: 15% auto;
+    margin: 10% auto;
     border: 1px solid #888;
     border-radius: 10px;
     box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
@@ -291,4 +301,32 @@ body {
 
 .card[hidden] {
     display: none;
+}
+/* ======================================= */
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip .tooltiptext {
+    font-size: 0.9rem;
+    font-family: Verdana, sans-serif;
+    visibility: hidden;
+    width: 80px;
+    background-color: rgb(230, 230, 230);
+    color: #504e4e;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -40px;
+
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
 }
