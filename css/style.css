@@ -53,6 +53,7 @@ h1 span {
 .notes-icons,
 .card-icons {
     padding-right: 0.5rem;
+    display: flex;
 }
 
 .notes-icons span {
@@ -114,10 +115,6 @@ h1 span {
 
 .card-list li:first-child {
     font-weight: bold;
-}
-
-.card-icons {
-    display: flex;
 }
 
 .card-icons span {
