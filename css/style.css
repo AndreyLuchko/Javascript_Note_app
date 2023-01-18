@@ -9,8 +9,9 @@ body {
 }
 
 .container {
-    width: 60%;
-    margin: 20px auto;
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 0 30px;
 }
 
 h1 {
@@ -35,10 +36,7 @@ h1 span {
 
 .notes-header-list {
     display: flex;
-}
-
-.notes-header-list {
-    width: 80%;
+    width: 84%;
     margin-left: 50px;
     list-style: none;
     color: #fff;
@@ -79,7 +77,7 @@ h1 span {
 
 .card-editable {
     margin-left: 50px;
-    width: 80%;
+    width: 84%;
     display: flex;
     position: relative;
 }
@@ -106,7 +104,7 @@ h1 span {
 }
 
 .card-list li {
-    white-space: nowrap;
+    /* white-space: nowrap; */
     overflow: hidden;
     width: 20%;
     padding: 0.7rem;
@@ -116,6 +114,10 @@ h1 span {
 
 .card-list li:first-child {
     font-weight: bold;
+}
+
+.card-icons {
+    display: flex;
 }
 
 .card-icons span {
@@ -257,7 +259,7 @@ h1 span {
 .total-btn {
   position: absolute;
   top: 14%;
-  right: 5%;
+  right: 10px;
   padding: 7px;
   border: none;
   border-radius: 4px;
@@ -330,3 +332,4 @@ h1 span {
 .tooltip:hover .tooltiptext {
     visibility: visible;
 }
+
