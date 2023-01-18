@@ -717,13 +717,16 @@ function forDate() {
 
     const forDates = form.querySelector('#forDates');
     const dates = form.querySelector('[name="dates"]');
+    let arrDates = dates.value.split(', ');
 
     if (dates.value === '') {
         temp = forDates.value;
-    } else {
+    }else if (forDates.value === arrDates[arrDates.length - 1]) {
+        temp = dates.value;
+    } 
+    else {
         temp = `${dates.value}, ${forDates.value}`;
     }
-
     return temp;
 }
 
